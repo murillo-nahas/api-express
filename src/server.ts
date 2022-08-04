@@ -1,3 +1,7 @@
 import { app } from "./index";
 
-app.listen(3000);
+const PORT = 3000;
+
+app.listen(PORT);
+
+export { PORT };
