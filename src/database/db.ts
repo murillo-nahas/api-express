@@ -12,10 +12,15 @@ const SQL_PRODUCT_CREATE = `
 const db = new sqlite3.Database(source, (err) => {
   if (err) {
     console.log(err.message);
+    throw err;
   } else {
     console.log("Database connected");
     db.run(SQL_PRODUCT_CREATE, (err) => {
-      err ? console.log(err) : console.log("Table created successfully");
+      if (err) {
+        console.log("Table already exists");
+      } else {
+        console.log("Table created successfully");
+      }
     });
   }
 });
