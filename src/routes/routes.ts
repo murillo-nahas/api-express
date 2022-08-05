@@ -1,50 +1,60 @@
 import { Router } from "express";
 import { Product } from "../entities/Product";
+import { IProductRepository } from "../repository/IProductRepository";
 
 const routes = Router();
 
 routes.post("/product", (req, res) => {
-  const products: Product = req.body;
+  const product: Product = req.body;
 
-  const id = 12345;
-  res.status(201).location(`/product/${id}`).send();
+  IProductRepository.create(product, (id) => {
+    if (id) {
+      res.status(201).location(`/product/${id}`).send();
+    } else {
+      res.status(400).send();
+    }
+  });
 });
 
 routes.get("/product", (req, res) => {
-  const products: Product[] = [
-    {
-      id: 1,
-      name: "Product 1",
-      description: "Product 1 description",
-    },
-    {
-      id: 2,
-      name: "Product 2",
-      description: "Product 2 description",
-    },
-  ];
-  res.json(products);
+  IProductRepository.getAll((product) => res.json(product));
 });
 
 routes.get("/product/:id", (req, res) => {
   const id: number = +req.params.id;
+  IProductRepository.get(id, (product) => {
+    if (product) {
+      res.json(product);
+    } else {
+      res.status(404).send();
+    }
+  });
 
-  const products: Product = {
-    id: id,
-    name: `Product ${id}`,
-    description: `Product description ${id}`,
-  };
-  res.json(products);
+  if (!id) {
+    res.status(404).send();
+  }
 });
 
 routes.put("/product/:id", (req, res) => {
   const id: number = +req.params.id;
-  res.status(204).send();
+  IProductRepository.put(id, req.body, (notFound) => {
+    if (notFound) {
+      res.status(404).send();
+    } else {
+      res.status(204).send();
+    }
+  });
 });
 
 routes.delete("/product/:id", (req, res) => {
   const id: number = +req.params.id;
-  res.status(204).send();
+  IProductRepository.delete(id, (notFound) => {
+    if (notFound) {
+      res.status(404).send();
+    } else {
+      res.status(204).send();
+    }
+  });
 });
 
 export default routes;
