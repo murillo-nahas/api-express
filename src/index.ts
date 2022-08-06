@@ -4,7 +4,7 @@ import { PORT } from "./server";
 
 const app = express();
 
-app.get("/", (req, res) => {
+app.get("/product", (req, res) => {
   res.send(`Working on port ${PORT}.`);
 });
 
